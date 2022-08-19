@@ -2,7 +2,7 @@
 Linux Dosyaları - Linux Files
 ### Wine Kısayol Oluşturucu
 ## Kurulum
-wget https://raw.githubusercontent.com/doguhan/linux-files/main/wineshortcut
+wget https://raw.githubusercontent.com/doguhan/linux-files/main/wineshortcut </br>
 chmod +x wineshortcut
 sudo mv -v wineshortcut /usr/local/bin
 ./wineshortcut path/to/app.exe
