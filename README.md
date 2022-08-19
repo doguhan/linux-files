@@ -9,7 +9,7 @@ Linux Dosyaları - Linux Files
 wget https://raw.githubusercontent.com/doguhan/linux-files/main/wineshortcut </br>
 chmod +x wineshortcut</br>
 sudo mv -v wineshortcut /usr/local/bin</br>
-./wineshortcut path/to/app.exe</br>
+wineshortcut path/to/app.exe</br>
 
 #####################################
 
@@ -19,9 +19,9 @@ sudo mv -v wineshortcut /usr/local/bin</br>
 
 ### Kurulum
 wget https://raw.githubusercontent.com/doguhan/linux-files/main/winetricks </br>
-chmod +x wineshortcut</br>
-sudo mv -v wineshortcut /usr/local/bin</br>
-./wineshortcut path/to/app.exe</br>
+chmod +x winetricks</br>
+sudo mv -v winetricks /usr/local/bin</br>
+winetricks cmd
 
 #####################################
 
