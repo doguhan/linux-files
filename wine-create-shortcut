@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# ============================================================================ #
+# Bu komut dosyası, Windows programları için uygulamalar menüsünde bir kısayol oluşturacaktır. 
+# 
+# Autor: Doğuhan ELMA
+# Contact: doguhan7799@hotmail.com
+# URL: https://github.com/doguhan/linux-files
+# ============================================================================ #
+
+# Bir uygulama argümanının gönderilip gönderilmediğini kontrol edin.
+if [[ $(file --mime-type -b "$1") = application/* ]]; then
+
+    # Gönderilen uygulama dosyasının tam yolunu, adını ve dizin adını alın.
+    myFile=$(realpath "$1")
+    myBaseName=$(basename "$myFile")
+    myPath=$(dirname "$myFile")
+
+    # Gerekli programın kurulu olup olmadığını doğrulama işlevi.
+    VerInst () {
+	if [ $? -eq 127 ]; then
+	    echo "$1 paket kurulu değil."
+	    echo "Bu betiği çalıştırmadan önce kurun."
+	    echo "İptal ediliyor."
+	    exit 1
+	fi
+    }
+
+    # Simgeyi ayıklayın ve farklı kalitede birkaç png dosyasına dönüştürün,
+    wrestool -x -t 14 "$myFile" > "/tmp/$myBaseName.ico" 2> /dev/null
+    VerInst icoutils
+    convert -alpha on "/tmp/$myBaseName.ico" "/tmp/$myBaseName.png" 2> /dev/null
+    VerInst imagemagick
+    # En iyi png resim dosyasını seçin.
+    cp "$(ls -S -1 "/tmp/$myBaseName"*".png"  | head -n 1)" "$myFile.icon.png"
+
+    # Kullanıcıdan uygulama kategorisi ve kısayol adı girişlerini alın.
+    appCategory=$(zenity --title "wine-create-shortcut" --height=450 --list \
+--radiolist --column " " --column "Kategoriler" 0 AudioVideo 0 Audio 0 Video 0 \
+Development 0 Education TRUE Game 0 Graphics 0 Network 0 Office 0 Settings 0 \
+System 0 Utility  --text "Kategori seç:" 2> /dev/null)
+    VerInst zenity
+    appName=$(zenity --title "wine-create-shortcut" --text " Kısayol için bir ad girin \
+" --entry)
+    # Uygulama başlatıcısına eklenecek masaüstü girişi özelliklerini oluşturun.
+    deskEntry="[Desktop Entry]"\\n"Exec=wine start /Unix \""$myFile"\""\\n"Name=\
+$appName"\\n"Path=$myPath"\\n"Type=Application"\\n"Categories=Application;\
+$category;"\\n"Icon="$myFile.icon.png""
+    # Bir .desktop dosyası oluşturun ve içine masaüstü girdileri ekleyin.
+    echo -e $deskEntry >"$myFile".desktop
+    # başlatıcı dosyasını uygulamalar menüsündeki bir kısayola bağlayın.
+    ln -s "$myFile.desktop" "$HOME/.local/share/applications/$myBaseName.desktop"
+    # Uygulamalar menüsünde uygulama bağlantısının başarıyla oluşturulup oluşturulmadığını test edin
+    if [ $? -eq 0 ]; then
+    	echo "Uygulamalar menüsünde kısayol oluşturuldu."
+    fi
+
+else 
+
+# Başvuru yapılmadıysa, bu mesajı gösterin.
+	echo Lütfen bir Windows uygulama dosyası gönderin. 
+	echo Usage: ./wine-create-shortcut path/to/app.exe 
+	echo
+
+fi
